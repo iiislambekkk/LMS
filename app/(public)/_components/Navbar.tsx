@@ -1,0 +1,99 @@
+﻿"use client"
+
+import React from 'react';
+import Link from "next/link";
+import Logo from "@/public/logo.svg"
+import Image from "next/image";
+import {ThemeToggle} from "@/components/ui/ThemeToggle";
+import {authClient} from "@/lib/auth-client";
+import { buttonVariants} from "@/components/ui/button";
+import UserDropdown from "@/app/(public)/_components/UserDropdown";
+import {Loader2} from "lucide-react";
+
+type NavigationItem = {
+    name: string;
+    href: string;
+}
+
+const navigationItems : NavigationItem[] = [
+    {
+        name: "Home",
+        href: "/"
+    },
+    {
+        name: "Courses",
+        href: "/courses"
+    },
+    {
+        name: "Dashboard",
+        href: "/admin"
+    }
+]
+
+const Navbar = () => {
+    const {data: session, isPending} = authClient.useSession()
+
+    return (
+        <header className={"sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-[backdrop-filter]:bg-background/60"}>
+            <div className={"container flex min-h-16 items-center mx-auto"}>
+                <Link href={"/"} className={"flex items-center space-x-2 mr-4"}>
+                    <Image
+                        width={48}
+                        height={48}
+                        src={Logo}
+                        alt={"logo"}
+                        className={"size-9"}
+                    />
+                    <p>
+                        PharosLMS
+                    </p>
+                </Link>
+
+                {/* Desktop */}
+                <nav className={"hidden md:flex md:flex-1 items-center justify-between "}>
+                    <div className={"flex items-center space-x-2"}>
+                        {navigationItems.map((item: NavigationItem, index) => (
+                            <Link
+                                key={index}
+                                href={`${item.href}`}
+                                className={"text-sm font-medium transition-colors hover:text-primary"}>
+                                {item.name}
+                            </Link>
+                        ))}
+                    </div>
+
+                    <div className={"flex space-x-2 items-center"}>
+                        <ThemeToggle/>
+
+                        {isPending && (
+                            <Loader2 className={"size-6 animate-spin mx-6"}/>
+                        )}
+
+                        {!isPending && session && (
+                            <UserDropdown email={session.user.email} name={session.user.name} image={session.user.image!} />
+                        )}
+
+                        {!isPending && !session && (
+                            <>
+                                <Link href={"/login"}
+                                      className={buttonVariants({variant: "secondary"})}
+                                >
+                                    Login
+                                </Link>
+                                <Link href={"/login"}
+                                      className={buttonVariants()}
+                                >
+                                    Get started
+                                </Link>
+
+                            </>
+                        )}
+
+                    </div>
+                </nav>
+            </div>
+        </header>
+    );
+};
+
+export default Navbar;
