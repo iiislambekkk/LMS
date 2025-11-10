@@ -43,10 +43,17 @@ const RenderErrorState = () => {
 };
 
 
-const RenderUploadedState = ({previewUrl, isDeleting, handleRemoveFile}: {previewUrl: string, isDeleting: boolean, handleRemoveFile: () => Promise<void>}) => {
+const RenderUploadedState = ({previewUrl, isDeleting, handleRemoveFile, fileType}: {fileType: "image" | "video", previewUrl: string, isDeleting: boolean, handleRemoveFile: () => Promise<void>}) => {
     return (
-        <div className={"text-center"}>
-            <Image src={previewUrl} alt={"Upload file"} fill className={"object-contain p-2"} unoptimized />
+        <div className={"text-center relative group w-full h-full flex items-center justify-center"}>
+            {fileType == "video" && (
+                <video src={previewUrl} controls className={"rouned-md w-full h-full"} />
+            )}
+
+            {fileType == "image" && (
+                <Image src={previewUrl} alt={"Upload file"} fill className={"object-contain p-2"} unoptimized />
+            )}
+
             <Button
                 type={"button"}
                 variant={"destructive"}

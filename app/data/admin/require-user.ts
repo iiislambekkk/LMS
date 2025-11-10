@@ -13,8 +13,6 @@ export async function requireAdmin() {
         return redirect("/login");
     }}
 
-    console.log(session.user)
-
     if (session.user.role !== "admin") {
         return redirect("/not-admin");
     }

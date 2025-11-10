@@ -124,8 +124,21 @@ export const chapterSchema = z.object({
     courseId: z.uuid()
 })
 
+export const lessonSchema = z.object({
+    name: z.string()
+        .min(3, {message: "Name must be at least 3 characters"}),
+    courseId: z.uuid(),
+    chapterId: z.uuid(),
+    description: z.string().min(3, { message: "Description must be at least 3 characters"}).optional(),
+    thumbnailKey: z.string().optional(),
+    videoKey: z.string().optional()
+})
+
 export type CourseSchemaInputType = z.input<typeof courseSchema>
 export type CourseSchemaOutputType = z.output<typeof courseSchema>
 
 export type ChapterSchemaInputType = z.input<typeof chapterSchema>
 export type ChapterSchemaOutputType = z.output<typeof chapterSchema>
+
+export type LessonSchemaInputType = z.input<typeof lessonSchema>
+export type LessonSchemaOutputType = z.output<typeof lessonSchema>

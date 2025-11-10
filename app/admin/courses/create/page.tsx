@@ -25,6 +25,7 @@ import {CreateCourse} from "@/app/admin/courses/create/actions";
 import { toast } from 'sonner';
 import {useRouter} from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
+import confetti from "canvas-confetti";
 
 
 const CourseCreationPage = () => {
@@ -48,6 +49,47 @@ const CourseCreationPage = () => {
     })
 
     function onSubmit(values: CourseSchemaOutputType) {
+        const triggerConfetti = () => {
+
+            const count = 200;
+            const defaults = {
+                origin: { y: 0.7 }
+            };
+
+            /* eslint-disable @typescript-eslint/ban-ts-comment  */
+            // @ts-ignore
+            function fire(particleRatio, opts) {
+                confetti({
+                    ...defaults,
+                    ...opts,
+                    particleCount: Math.floor(count * particleRatio)
+                });
+            }
+
+            fire(0.25, {
+                spread: 26,
+                startVelocity: 55,
+            });
+            fire(0.2, {
+                spread: 60,
+            });
+            fire(0.35, {
+                spread: 100,
+                decay: 0.91,
+                scalar: 0.8
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 25,
+                decay: 0.92,
+                scalar: 1.2
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 45,
+            });
+        }
+
         startPending(async () => {
             const {data: result, error} = await tryCatch(CreateCourse(values))
 
@@ -58,6 +100,7 @@ const CourseCreationPage = () => {
 
             if (result?.status === "success") {
                 toast.success(result.message);
+                triggerConfetti()
                 form.reset()
                 router.push("/admin/courses");
             }
@@ -176,7 +219,9 @@ const CourseCreationPage = () => {
                                     <FormItem className={"w-full"}>
                                         <FormLabel>Thumbnail image</FormLabel>
                                         <FormControl>
-                                           <Uploader value={field.value} onChange={field.onChange} />
+                                           <Uploader value={field.value} onChange={field.onChange}
+                                                     fileTypeAccepted={'image'}
+                                           />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

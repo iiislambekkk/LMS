@@ -29,9 +29,10 @@ interface IUploaderState {
 interface IUploaderProps {
     value: string;
     onChange: (value: string) => void;
+    fileTypeAccepted: "video" | "image"
 }
 
-const Uploader = ({value, onChange} : IUploaderProps) => {
+const Uploader = ({value, onChange, fileTypeAccepted} : IUploaderProps) => {
     const [fileState, setFileState] = useState<IUploaderState>({
         error: false,
         file: null,
@@ -39,12 +40,12 @@ const Uploader = ({value, onChange} : IUploaderProps) => {
         uploading: false,
         progress: 0,
         isDeleting: false,
-        objectUrl: value ? (env.NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_URL + "/" + value) : null,
-        fileType: "image",
+        objectUrl: value ? (env.NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_URL + "/" + value) : undefined,
+        fileType: fileTypeAccepted,
         key: value
     });
 
-    const uploadFile = async (file: File) => {
+    const uploadFile = useCallback(async(file: File) => {
         setFileState(prevState => ({...prevState, uploading: true, progress: 0}));
 
         try {
@@ -55,7 +56,7 @@ const Uploader = ({value, onChange} : IUploaderProps) => {
                     fileName: file.name,
                     contentType: file.type,
                     size: file.size,
-                    isImage: true
+                    isImage: fileTypeAccepted === "image"
                 })
             })
 
@@ -107,12 +108,16 @@ const Uploader = ({value, onChange} : IUploaderProps) => {
             toast.success("Something went wrong while uploading.");
             setFileState(prevState => ({...prevState, progress: 0, uploading: false, error: true}));
         }
-    }
+    }, [fileTypeAccepted, onChange])
 
     const onDrop = useCallback(async (acceptedFiles : File[]) => {
         if (acceptedFiles.length > 0) {
             const file = acceptedFiles[0]
-            
+
+            if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")){
+                URL.revokeObjectURL(fileState.objectUrl)
+            }
+
             setFileState({
                 file: file,
                 uploading: false,
@@ -121,12 +126,12 @@ const Uploader = ({value, onChange} : IUploaderProps) => {
                 error: false,
                 id: uuidv4(),
                 isDeleting: false,
-                fileType: "image"
+                fileType: fileTypeAccepted
             })
 
             await uploadFile(file)
         }
-    }, [uploadFile])
+    }, [uploadFile, fileState.objectUrl, fileTypeAccepted])
 
     const handleRemoveFile = async () => {
         if (fileState.isDeleting || !fileState.objectUrl) return;
@@ -162,7 +167,7 @@ const Uploader = ({value, onChange} : IUploaderProps) => {
                 uploading: false,
                 progress: 0,
                 isDeleting: false,
-                fileType: "image"
+                fileType: fileTypeAccepted
             });
 
             toast.success("File removed successfully")
@@ -209,7 +214,7 @@ const Uploader = ({value, onChange} : IUploaderProps) => {
         }
 
         if (fileState.objectUrl) {
-           return <RenderUploadedState previewUrl={fileState.objectUrl} isDeleting={fileState.isDeleting} handleRemoveFile={handleRemoveFile} />
+           return <RenderUploadedState fileType={fileTypeAccepted} previewUrl={fileState.objectUrl} isDeleting={fileState.isDeleting} handleRemoveFile={handleRemoveFile} />
         }
 
         return <RenderEmptyState isDragActive={isDragActive}/>
@@ -217,10 +222,10 @@ const Uploader = ({value, onChange} : IUploaderProps) => {
 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({
         onDrop,
-        accept: {"image/*": []},
+        accept: fileTypeAccepted === "video" ? {'video/*': []} : {"image/*": []},
         maxFiles: 1,
         multiple: false,
-        maxSize: 5 * 1024 * 1024,
+        maxSize: 30 * 1024 * 1024,
 
         onDropRejected: rejectedFiles,
         disabled: fileState.uploading || !!fileState.objectUrl

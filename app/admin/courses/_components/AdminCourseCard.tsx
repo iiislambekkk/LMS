@@ -12,12 +12,17 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import {Skeleton} from "@/components/ui/skeleton";
+import React from "react";
+import {generateS3Url} from "@/hooks/generateS3Url";
 
 interface IAdminCourseCardProps {
     data: AdminCourseType;
 }
 
 export function AdminCourseCard({data}: IAdminCourseCardProps) {
+    const thumbnailUrl = generateS3Url(data.fileKey)
+
     return (
     <Card className="group relative pt-0 gap-0">
         <div className={"absolute top-2 right-2 z-10"}>
@@ -46,7 +51,7 @@ export function AdminCourseCard({data}: IAdminCourseCardProps) {
                     <DropdownMenuSeparator />
 
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/courses/${data.id}/preview`} >
+                        <Link href={`/admin/courses/${data.id}/delete`} >
                             <TrashIcon className={"size-4 mr-2"} />
                             Delete
                         </Link>
@@ -55,7 +60,7 @@ export function AdminCourseCard({data}: IAdminCourseCardProps) {
             </DropdownMenu>
         </div>
         <Image
-            src={env.NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_URL + "/" + data.fileKey}
+            src={thumbnailUrl}
             alt={`${data.title} course thumbnail`}
             className={"w-full rounded-t-lg aspect-video h-full object-cover"}
             width={1920} height={1080}
@@ -91,3 +96,42 @@ export function AdminCourseCard({data}: IAdminCourseCardProps) {
         </CardContent>
     </Card>
 )}
+
+export const AdminCourseCardSkeleton = () => {
+    return (
+        <Card className="group relative pt-0 gap-0">
+            <div className={"absolute top-2 right-2 z-10"}>
+                <Skeleton className={"h-6 w-16 rounded-full"} />
+                <Skeleton className={"size-8 rounded-md"} />
+            </div>
+            <div className={"w-full relative h-fit"}>
+                <Skeleton className={"w-full rounded-t-lg aspect-video h-[250px] object-cover"} />
+            </div>
+            <CardContent className={"mt-6"}>
+                {/* Title */}
+                <Skeleton className="h-6 w-3/4" />
+
+                {/* Small description */}
+                <Skeleton className="h-4 w-full mt-4" />
+                <Skeleton className="h-4 w-5/6 mt-2" />
+
+                {/* Meta rows */}
+                <div className="mt-4 flex items-center gap-x-5">
+                    <div className="flex items-center gap-x-2">
+                        <Skeleton className="size-7 rounded-md" />
+                        <Skeleton className="h-4 w-10" />
+                    </div>
+
+                    <div className="flex items-center gap-x-2">
+                        <Skeleton className="size-7 rounded-md" />
+                        <Skeleton className="h-4 w-16" />
+                    </div>
+                </div>
+
+                {/* Edit button */}
+                <Skeleton className="w-full h-10 mt-4" />
+            </CardContent>
+        </Card>
+
+    )
+}

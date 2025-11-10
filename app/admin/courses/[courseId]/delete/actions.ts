@@ -1,0 +1,36 @@
+﻿"use server"
+
+
+import {ApiResponse} from "@/lib/types";
+import {requireAdmin} from "@/app/data/admin/require-user";
+import {prisma} from "@/lib/prisma";
+import {revalidatePath} from "next/cache";
+
+export async function deleteCourse(
+        courseId: string
+) : Promise<ApiResponse> {
+
+    await requireAdmin()
+
+    try {
+        await prisma.course.delete({
+            where: {
+                id: courseId
+            }
+        })
+
+        revalidatePath(`/admin/courses`)
+
+        return {
+            status: "success",
+            message: "Course deleted successfully"
+        }
+    }
+    catch (e) {
+        console.log(e)
+        return {
+            status: "error",
+            message: "An error occured"
+        }
+    }
+}

@@ -14,6 +14,9 @@ import Link from "next/link";
 import {toast} from "sonner";
 import {reorderChapters, reorderLessons} from "@/app/admin/courses/[courseId]/edit/actions";
 import NewChapterModal from "@/app/admin/courses/[courseId]/edit/_components/NewChapterModal";
+import NewLessonModal from "@/app/admin/courses/[courseId]/edit/_components/NewLessonModal";
+import DeleteLessonModal from "@/app/admin/courses/[courseId]/edit/_components/DeleteLessonModal";
+import DeleteChapterModal from "@/app/admin/courses/[courseId]/edit/_components/DeleteChapterModal";
 
 
 interface ICourseStructureProps {
@@ -270,9 +273,7 @@ const CourseStructure = ({data} : ICourseStructureProps) => {
 
                                                         </div>
 
-                                                        <Button size={"icon"} variant={"outline"}>
-                                                            <XIcon className={"size-4"}/>
-                                                        </Button>
+                                                        <DeleteChapterModal chapterId={item.id} courseId={data.id}/>
                                                     </div>
 
                                                     <CollapsibleContent>
@@ -312,9 +313,7 @@ const CourseStructure = ({data} : ICourseStructureProps) => {
 
                                                                                     </div>
 
-                                                                                    <Button size={"icon"} variant={"outline"}>
-                                                                                        <Trash2Icon className={"size-4"}/>
-                                                                                    </Button>
+                                                                                    <DeleteLessonModal courseId={data.id} chapterId={item.id} lessonId={lesson.id} />
                                                                                 </div>
                                                                             )}
                                                                         </SortableItem>
@@ -323,9 +322,7 @@ const CourseStructure = ({data} : ICourseStructureProps) => {
                                                             </SortableContext>
 
                                                             <div className={"p-2"}>
-                                                                <Button className={"w-full"} variant={"outline"}>
-                                                                    Create New Lesson
-                                                                </Button>
+                                                                <NewLessonModal courseId={data.id} chapterId={item.id} />
                                                             </div>
                                                         </div>
                                                     </CollapsibleContent>
