@@ -26,7 +26,7 @@ const navigationItems : NavigationItem[] = [
     },
     {
         name: "Dashboard",
-        href: "/admin"
+        href: "/dashboard"
     }
 ]
 

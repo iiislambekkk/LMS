@@ -2,6 +2,7 @@
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {SiteHeader} from "@/components/sidebar/site-header";
+import {DashboardSidebar} from "@/app/dashboard/_components/DashboardAppSidebar";
 
 const AdminLayout = ({children} : {children: React.ReactNode}) => {
     return (
@@ -14,7 +15,7 @@ const AdminLayout = ({children} : {children: React.ReactNode}) => {
             }
             suppressHydrationWarning
         >
-            <AppSidebar variant="inset" />
+            <DashboardSidebar variant="inset" />
             <SidebarInset>
                 <SiteHeader />
                 <div className="flex flex-1 flex-col">

@@ -3,6 +3,8 @@ import {getAllCourses} from "@/app/data/course/getAllCourses";
 import PublicCourseCard, {PublicCourseCardSkeleton} from "@/app/(public)/courses/_components/PublicCourseCard";
 import {AdminCourseCardSkeleton} from "@/app/admin/courses/_components/AdminCourseCard";
 
+export const dynamic = "force-dynamic"
+
 const PublicCoursesPage = () => {
     return (
         <div className={"mt-5"}>

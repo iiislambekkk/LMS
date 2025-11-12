@@ -13,16 +13,20 @@ export const env = createEnv({
         AWS_ACCESS_KEY: z.string().min(1),
         AWS_SECRET_KEY: z.string().min(1),
         AWS_ENDPOINT_URL: z.string().min(1),
-        AWS_REGION: z.string().min(1)
+        AWS_REGION: z.string().min(1),
+        STRIPE_SECRET_KEY: z.string().min(1),
+        STRIPE_WEBHOOK_SECRET: z.string().min(1),
     },
 
     client: {
         NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_URL: z.string().min(1),
-        NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET_NAME: z.string().min(1)
+        NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET_NAME: z.string().min(1),
+        NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string().min(1)
     },
 
     experimental__runtimeEnv: {
         NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_URL: process.env.NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_URL,
-        NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET_NAME: process.env.NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET_NAME
+        NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET_NAME: process.env.NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET_NAME,
+        NEXT_PUBLIC_STRIPE_PUBLIC_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY
     }
 });

@@ -1,6 +1,6 @@
 ﻿import {prisma} from "@/lib/prisma";
 
-export async function getCourseBySlug(slug: string) : GetCourseBySlugType {
+export async function getCourseBySlug(slug: string)  {
     return prisma.course.findUnique({
         where: {
             slug

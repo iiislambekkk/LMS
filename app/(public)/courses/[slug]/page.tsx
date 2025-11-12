@@ -9,14 +9,17 @@ import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible";
 import {Card, CardContent} from "@/components/ui/card";
 import {CheckIcon} from "lucide-react";
-import { Button } from '@/components/ui/button';
+import {Button, buttonVariants} from '@/components/ui/button';
+import {isUserEnrolled} from "@/app/data/user/isUserEnrolled";
+import Link from "next/link";
+import EnrollmentButton from "@/app/(public)/courses/[slug]/_components/EnrollmentButton";
 
 const SlugPage = async ({params} : {params: {slug: string}}) => {
     const {slug} = await params
     const course : GetCourseBySlugType = await getCourseBySlug(slug);
     const thumbnailUrl = generateS3Url(course.fileKey)
+    const isEnrolled = await isUserEnrolled(course.id)
 
-    console.log(JSON.parse(course.description))
 
 
     return (
@@ -82,7 +85,7 @@ const SlugPage = async ({params} : {params: {slug: string}}) => {
 
                     <div className={"space-y-4"}>
                         {course.chapters.map((chapter, chapterIndex) => (
-                            <Collapsible key={chapter.slug} defaultOpen={chapterIndex === 0}>
+                            <Collapsible key={chapter.id} defaultOpen={chapterIndex === 0}>
                                 <Card  className={"p-0 overflow-hidden border-2 transition-all duration-200 hover:shadow-md gap-0"}>
                                     <CollapsibleTrigger>
                                         <div>
@@ -245,9 +248,20 @@ const SlugPage = async ({params} : {params: {slug: string}}) => {
                                 </ul>
                             </div>
 
-                            <Button>
-                                Enroll Now!
-                            </Button>
+
+                            {isEnrolled && (
+                                <Link href={"/dashboard"} className={buttonVariants({
+                                    className: "w-full"
+                                })}>
+                                    Watch Course
+                                </Link>
+                            )}
+
+                            {!isEnrolled && (
+                                <EnrollmentButton courseId={course.id} />
+                            )}
+
+
                             <p className={"mt-3 text-center text-xs text-muted-foreground"}>30-seconds money-back guarantee</p>
                         </CardContent>
                     </Card>
